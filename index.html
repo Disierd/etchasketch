@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html>
+<header>
+    <title>Etchasketch</title>
+    <link rel="stylesheet" href="myStyles.css">
+</header>
+<body>
+    <div class="header-content">
+        <h1>ETCH-A-SKETCH!</h1>
+        <button id="reset-button">Create new grid</button>
+    </div>
+    <div id="canvas">
+
+    </div>
+
+<script>
+    
+    function startGame(gridSize = 16) { // function with default value for initial start
+
+        let canvas = document.querySelector("#canvas");
+
+        // Creates grid and inserts it into the canvas
+        let gridContainer = document.createElement("div");
+        gridContainer.setAttribute("class", "grid-container");
+        gridContainer.style.cssText  = (`display: grid; grid-template-columns: repeat(${gridSize}, 1fr); 
+        grid-template-rows: repeat(${gridSize}, auto); width: 100%; height: 100%; margin: auto;`);
+        canvas.appendChild(gridContainer);
+
+        let totalCells = gridSize * gridSize;
+
+        // Fills grid with cells
+        for(let i = 0; i < totalCells; i++) {
+
+            let gridCell = document.createElement("div");
+            gridCell.setAttribute("class", "grid-cell");
+            gridCell.style.background = "white";
+            gridCell.style.filter = "brightness(1)"; // Sets brightness value, which is used to progressively darken cell colour
+            let currentBrightness = 1; // Variable used to track brightness as there's no way to easily directly access the number value
+
+            // sets mouseover event listener to darken cell
+            gridCell.addEventListener("mouseover", (e) => {
+                currentBrightness -= 0.1;
+                e.target.style.filter = `brightness(${currentBrightness})`;})
+
+            gridContainer.appendChild(gridCell);
+
+
+        }
+    
+    }
+
+    function resetGame() {
+
+        // Resets grid
+        let cellsDeletion = document.querySelectorAll(".grid-cell");
+        cellsDeletion.forEach(cell => {
+            cell.remove();
+        });
+        document.querySelector(".grid-container").remove();
+
+        // Takes user input and checks it
+        let inputSize = prompt("Please enter number of squares per side of grid. Maximum is 100.")
+        while (inputSize > 100 || inputSize < 1 || isNaN(inputSize)) {
+            inputSize = prompt("Input size is not valid, please enter a number below 100 and above 0.")
+        }
+        startGame(inputSize);
+    }
+
+    window.onload = startGame();
+    let resetButton = document.querySelector("#reset-button");
+    resetButton.addEventListener("click", resetGame)
+
+</script>
+
+</body>
+</html>
